@@ -1,0 +1,18 @@
+﻿@model IEnumerable<GitHubBranch> // Replace 'GitHubBranch' with the appropriate data type for your 'BasicModel'
+
+<h1>GitHub Branches</h1>
+
+@if (Model != null && Model.Any())
+{
+    <ul>
+        @foreach (var branch in Model)
+        {
+            <li>@branch.Name - Commit: @branch.Commit.Sha</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No branches found.</p>
+}
+

@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Make API Call Example";
+}
+
+<h2>Make API Call Example</h2>
+
+<button id="makeApiCallBtn" class="btn btn-primary">Make API Call</button>
+
+@section Scripts {
+    <script>// JavaScript code to handle the button click
+        document.getElementById("makeApiCallBtn").addEventListener("click", function () {
+            triggerBackendApiCall();
+        });
+
+        // JavaScript function to call the backend endpoint
+        function triggerBackendApiCall() {
+            // Fetch the backend API endpoint URL
+            const backendApiUrl = "/ApiController/TriggerApiCall";
+
+            // Set request headers (optional, depends on your backend requirements)
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json");
+
+            // Configure the fetch() options
+            const fetchOptions = {
+                method: "POST",
+                headers: headers
+            };
+
+            // Make the request to the backend API
+            fetch(backendApiUrl, fetchOptions)
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response data from the backend (success or error message)
+                    console.log(data); // Output the response to the browser console
+                })
+                .catch(error => {
+                    // Handle any errors that occurred during the API call
+                    console.error("Error:", error);
+                });
+        }</script>
+}
