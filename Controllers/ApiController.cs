@@ -1,16 +1,16 @@
-﻿using System;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
 namespace chessAI.Controllers
 {
-    public class ApiController : Controller
+
+    [Route("api/[controller]")]
+    [ApiController]
+    public class PlaneController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ApiController(IHttpClientFactory httpClientFactory)
+        public PlaneController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }
@@ -20,9 +20,9 @@ namespace chessAI.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> MakeApiCall()
-        {
+        {/*
             // Your access token from the Duffel API
             string accessToken = "duffel_test_ymnhCGBYCd8K0h23yJnuzRM3cZ45QZ3zVAMp1IgUqMk"; // Replace with your actual access token
 
@@ -33,53 +33,37 @@ namespace chessAI.Controllers
             // API endpoint URL
             string apiUrl = "https://api.duffel.com/air/orders";
 
-            // API request payload
+                    // API request payload
             string requestBody = @"
-            {
-                ""data"": {
-                    ""type"": ""instant"",
-                    ""services"": [
-                        {
-                            ""quantity"": 1,
-                            ""id"": ""ase_00009hj8USM7Ncg31cB123""
-                        }
-                    ],
-                    ""selected_offers"": [
-                        ""off_00009htyDGjIfajdNBZRlw""
-                    ],
-                    ""payments"": [
-                        {
-                            ""type"": ""balance"",
-                            ""currency"": ""GBP"",
-                            ""amount"": ""30.20""
-                        }
-                    ],
-                    ""passengers"": [
-                        {
-                            ""title"": ""mrs"",
-                            ""phone_number"": ""+442080160509"",
-                            ""infant_passenger_id"": ""pas_00009hj8USM8Ncg32aTGHL"",
-                            ""identity_documents"": [
-                                {
-                                    ""unique_identifier"": ""19KL56147"",
-                                    ""type"": ""passport"",
-                                    ""issuing_country_code"": ""GB"",
-                                    ""expires_on"": ""2025-04-25""
-                                }
-                            ],
-                            ""id"": ""pas_00009hj8USM7Ncg31cBCLL"",
-                            ""given_name"": ""Amelia"",
-                            ""gender"": ""f"",
-                            ""family_name"": ""Earhart"",
-                            ""email"": ""amelia@duffel.com"",
-                            ""born_on"": ""1987-07-24""
-                        }
-                    ],
-                    ""metadata"": {
-                        ""payment_intent_id"": ""pit_00009htYpSCXrwaB9DnUm2""
-                    }
+             {
+              ""data"": {
+              ""slices"": [
+              {
+                ""origin"": ""LHR"",
+                ""destination"": ""JFK"",
+                ""departure_time"": {
+                  ""to"": ""17:00"",
+                  ""from"": ""09:45""
+                },
+                ""departure_date"": ""2020-04-24"",
+                ""arrival_time"": {
+                  ""to"": ""17:00"",
+                  ""from"": ""09:45""
                 }
-            }";
+              }
+            ],
+            ""passengers"": [
+              {
+                ""family_name"": ""Earhart"",
+                ""given_name"": ""Amelia"",
+                ""type"": ""adult""
+              }
+     
+            ],
+            ""max_connections"": 0,
+            ""cabin_class"": ""economy""
+          }
+        }";
 
             // Create the HttpContent from the request body
             HttpContent httpContent = new StringContent(requestBody, Encoding.UTF8, "application/json");
@@ -98,24 +82,68 @@ namespace chessAI.Controllers
             if (response.IsSuccessStatusCode)
             {
                 string apiResponse = await response.Content.ReadAsStringAsync();
-                return View("Success", apiResponse);
+                return Ok(apiResponse); // Return the API response as JSON
             }
             else
             {
                 string errorMessage = await response.Content.ReadAsStringAsync();
-                return View("Error", errorMessage);
+                return BadRequest(errorMessage);
             }
+            */
+
+            // Your access token from the Duffel API
+            string accessToken = "duffel_test_ymnhCGBYCd8K0h23yJnuzRM3cZ45QZ3zVAMp1IgUqMk"; // Replace with your actual access token
+
+            // Log a message to the console to indicate that the method is running
+            Console.WriteLine("MakeApiCall method is running.");
+
+            // API endpoint URL with query parameters (if any)
+            string apiUrl = "https://api.duffel.com/air/orders";
+
+            // Set request headers
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+            httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip");
+            httpClient.DefaultRequestHeaders.Add("Duffel-Version", "v1");
+            httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+
+            // Send the GET request and get the response
+            HttpResponseMessage response = await httpClient.GetAsync(apiUrl);
+
+            // Check if the response was successful
+            if (response.IsSuccessStatusCode)
+            {
+                string apiResponse = await response.Content.ReadAsStringAsync();
+                return Ok(apiResponse); // Return the API response as JSON
+            }
+            else
+            {
+                string errorMessage = await response.Content.ReadAsStringAsync();
+                return BadRequest(errorMessage);
+            }
+
+            /*
+            var sampleData = new
+            {
+                Name = "John Doe",
+                Age = 30,
+                Email = "john@example.com"
+            };
+
+            return Ok(sampleData);
+            */
+
         }
 
         [HttpPost]
-public async Task<IActionResult> TriggerApiCall()
-{
-    // Call the MakeApiCall method to make the API call
-    var result = await MakeApiCall();
+        public async Task<IActionResult> TriggerApiCall()
+        {
+            // Call the MakeApiCall method to make the API call
+            var result = await MakeApiCall();
 
-    // Return the result (success or error message) to the frontend
-    return Ok(result);
-}
+            // Return the result (success or error message) to the frontend
+            return Ok(result);
+        }
     }
 }
 
